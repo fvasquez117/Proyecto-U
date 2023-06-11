@@ -1,0 +1,193 @@
+import java.util.Scanner;
+
+class Nodo {
+    private String dato;
+    private Nodo izquierda, derecha;
+
+    public Nodo(String dato) {
+        this.dato = dato;
+        this.izquierda = this.derecha = null;
+    }
+
+    public String getDato() {
+        return dato;
+    }
+
+    public Nodo getIzquierda() {
+        return izquierda;
+    }
+
+    public void setIzquierda(Nodo izquierda) {
+        this.izquierda = izquierda;
+    }
+
+    public Nodo getDerecha() {
+        return derecha;
+    }
+
+    public void setDerecha(Nodo derecha) {
+        this.derecha = derecha;
+    }
+
+    public void imprimirDato() {
+        System.out.print(this.getDato() + ",");
+    }
+}
+
+class Arbol {
+    private Nodo raiz;
+
+    public Arbol() {
+
+    }
+
+    public boolean existe(String busqueda) {
+        return existe(this.raiz, busqueda);
+    }
+
+    private boolean existe(Nodo n, String busqueda) {
+        if (n == null) {
+            return false;
+        }
+        if (n.getDato().equals(busqueda)) {
+            return true;
+        } else if (busqueda.compareTo(n.getDato()) < 0) {
+            return existe(n.getIzquierda(), busqueda);
+        } else {
+            return existe(n.getDerecha(), busqueda);
+        }
+
+    }
+
+    public void insertar(String dato) {
+        if (this.raiz == null) {
+            this.raiz = new Nodo(dato);
+        } else {
+            this.insertar(this.raiz, dato);
+        }
+    }
+
+    private void insertar(Nodo padre, String dato) {
+        if (dato.compareTo(padre.getDato()) > 0) {
+            if (padre.getDerecha() == null) {
+                padre.setDerecha(new Nodo(dato));
+            } else {
+                this.insertar(padre.getDerecha(), dato);
+            }
+        } else {
+            if (padre.getIzquierda() == null) {
+                padre.setIzquierda(new Nodo(dato));
+            } else {
+                this.insertar(padre.getIzquierda(), dato);
+            }
+        }
+    }
+
+    private void preorden(Nodo n) {
+        if (n != null) {
+            n.imprimirDato();
+            preorden(n.getIzquierda());
+            preorden(n.getDerecha());
+        }
+    }
+
+    private void inorden(Nodo n) {
+        if (n != null) {
+            inorden(n.getIzquierda());
+            n.imprimirDato();
+            inorden(n.getDerecha());
+        }
+    }
+
+    private void postorden(Nodo n) {
+        if (n != null) {
+            postorden(n.getIzquierda());
+            postorden(n.getDerecha());
+            n.imprimirDato();
+        }
+    }
+
+    public void preorden() {
+        this.preorden(this.raiz);
+    }
+
+    public void inorden() {
+        this.inorden(this.raiz);
+    }
+
+    public void postorden() {
+        this.postorden(this.raiz);
+    }
+}
+
+class AyudanteDatos {
+    public static Arbol obtenerArbol() {
+        String palabra = AyudanteDatos.solicitarPalabra();
+        Arbol arbol = new Arbol();
+        for (int i = 0; i < palabra.length(); i++) {
+            String letra = String.valueOf(palabra.charAt(i));
+            if (!arbol.existe(letra)) {
+                arbol.insertar(letra);
+            }
+        }
+        return arbol;
+    }
+
+    private static String solicitarPalabra() {
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            System.out.println("Ingresa la palabra: ");
+            String palabra = sc.nextLine();
+            if (palabra.indexOf(" ") != -1) {
+                System.out.println("No puedes ingresar una frase");
+            } else if (palabra.length() < 10) {
+                System.out.println("La longitud minima es de 10");
+            } else {
+                return palabra;
+            }
+        }
+
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        String eleccion = "";
+        Arbol arbol = null;
+        Scanner sc = new Scanner(System.in);
+        while (!eleccion.equals("5")) {
+            System.out.println("1. Ingresar");
+            System.out.println("2. Visualizar Pre-Orden");
+            System.out.println("3. Visualizar Pos-Orden");
+            System.out.println("4. Visualizar In-Orden");
+            System.out.println("5. Salir");
+            System.out.println("Elige: ");
+            eleccion = sc.nextLine();
+            if (eleccion.equals("1")) {
+                arbol = AyudanteDatos.obtenerArbol();
+            } else if (eleccion.equals("2")) {
+                if (arbol != null) {
+                    arbol.preorden();
+                    System.out.println("");
+                } else {
+                    System.out.println("No has ingresado nada");
+                }
+            } else if (eleccion.equals("3")) {
+                if (arbol != null) {
+                    arbol.postorden();
+                    System.out.println("");
+                } else {
+                    System.out.println("No has ingresado nada");
+                }
+            } else if (eleccion.equals("4")) {
+                if (arbol != null) {
+                    arbol.inorden();
+                    System.out.println("");
+                } else {
+                    System.out.println("No has ingresado nada");
+                }
+            }
+        }
+
+    }
+}
